@@ -1,3 +1,4 @@
+[Tasks](https://tenka1-2018-beginner.contest.atcoder.jp/assignments)
 # Measure
 construct reverse std::base_string using
 ```string name(v.rbegin(), v.rend());```

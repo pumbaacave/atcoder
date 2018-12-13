@@ -4,7 +4,7 @@ import numpy as np
 from loguru import logger
 
 prog = re.compile(r"position=<(?P<x>.\d+),\s(?P<y>.\d+)>\s*velocity=<(?P<xa>.\d*),\s(?P<ya>.\d*)>$")
-
+np.set_printoptions(threshold=100000, edgeitems=20) # np.inf
 
 def parse_line(line):
     res = prog.match(line)
@@ -30,7 +30,10 @@ def print_update_chart(data):
         point[0] += point[2]
         point[1] += point[3]
 
-    print(MEM)
+    if H < 4000:
+        print(MEM)
+    else:
+        print("waiting for next")
 
     return data
 
@@ -40,7 +43,7 @@ def run():
 
     while(True):
         data = print_update_chart(data)
-        time.sleep(1) # sleep 1 second
+        time.sleep(0.5) # sleep 1 second
 
 run()
 

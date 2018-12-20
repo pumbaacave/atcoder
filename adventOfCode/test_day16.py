@@ -1,5 +1,6 @@
 from loguru import logger
-from day16 import (parse_stmt, parse_op)
+from day16 import \
+(parse_stmt, parse_op, FUN_LIST, count_possible_op)
 
 
 TEST_INPUT1 = """\
@@ -15,15 +16,20 @@ def test_sample():
     end = len(lines)
     while(i < end):
         # line 1
-        logger.debug(parse_stmt(lines[i]))
+        before = parse_stmt(lines[i])
+        logger.debug(before)
         i += 1
         # line 2
-        logger.debug(parse_op(lines[i]))
+        op = parse_op(lines[i])
+        logger.debug(op)
         i += 1
         # line 3
-        logger.debug(parse_stmt(lines[i]))
+        after = parse_stmt(lines[i])
+        logger.debug(after)
         i += 1
         # line 4
         i += 1
+        logger.debug(count_possible_op(before, after, op))
+
 
 

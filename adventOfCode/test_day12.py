@@ -25,7 +25,7 @@ def test_sample():
     for _ in range(20):
         idx, state = day12.next_gen(rule_book, idx, state)
 
-    # logger.debug(state)
+    logger.debug(state)
     assert day12.cal_point(idx, state) == 325
 
 REAL_RULES = '''\

@@ -72,7 +72,7 @@ def next_gen(rule_book, start_idx, state):
 
         # logger.debug(f"elem: {i}: key:{key}")
         if key in rule_book.keys():
-            next_state[i-2] = 1
+            next_state[i-1] = 1
 
     return start_idx, next_state
 

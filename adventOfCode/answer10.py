@@ -12,6 +12,8 @@ with open('input10', 'r') as f:
 import numpy as np
 x = np.array(x)
 v = np.array(v)
+print(x)
+print(v)
 
 import matplotlib.pyplot as plt
 

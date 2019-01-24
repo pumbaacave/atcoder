@@ -1,28 +1,37 @@
 from loguru import logger
+from collections import Counter
+debug = logger.debug
 
 def cal(N, bridges):
     mod = 10**9 + 7
+    bridge_cnt = Counter()
     bw_list = [[1,1] for _ in range(N+1)]
     con_list = [[] for _ in range(N+1)]
+    for l, r in bridges:
+        bridge_cnt[r] += 1
+        bridge_cnt[l] += 1
+        con_list[l].append(r)
+        con_list[r].append(l)
     root = bridges[0][0]
 
     def update(cur, parent):
-        logger.debug(cur)
+        # logger.debug(cur)
         for child in con_list[cur]:
             if child == parent:
                 continue
             else:
                 update(child, cur)
-            # enter here if children all updated
-            for child in con_list[cur]:
-                # black
-                bw_list[cur][0] *= bw_list[child][1] % mod
-                # white
-                bw_list[cur][1] *= (bw_list[child][0] + bw_list[child][1]) % mod
+                # enter here if children all updated
+            # black
+            bw_list[cur][0] = (bw_list[cur][0]*bw_list[child][1])
+            # white
+            bw_list[cur][1] = (bw_list[cur][1] * (bw_list[child][0] + bw_list[child][1]))
+            # debug(cur)
+            # debug(bw_list)
     update(root, 0)
     logger.debug(bw_list)
 
-    return sum(bw_list[root])
+    return max([sum(bw) for bw in bw_list]) % mod
 
 
 

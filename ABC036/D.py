@@ -11,10 +11,10 @@ N 個の島があります。 島には 1 から N までの番号がついて�
 
 """
 
-from loguru import logger
+# from loguru import logger
 from itertools import chain
 from functools import reduce
-from collections import Counter
+from collections import Counter, deque
 class WBTree(object):
     class Node(object):
         def __init__(self, children=[]):
@@ -44,31 +44,57 @@ def cal(N, bridges):
         con_list[l].append(r)
         con_list[r].append(l)
 
-    logger.debug(bridge_cnt)
+    # logger.debug(bridge_cnt)
     sorted_c = sorted(bridge_cnt, key=lambda key: bridge_cnt[key]) # cnt min first
-    logger.debug(sorted_c)
 
     max_iland = sorted_c[-1]
     sentinel = object()
     ite = chain((key for key in sorted_c), [sentinel])
 
+
+    def cal_bw(nxt):
+        # parent cnt > child cnt
+        # so parent bw_value is [0,0]
+        # logger.debug(nxt)
+        bw_list[nxt][0] = reduce(lambda x,y: x*y, [bw_list[con][1] for con in con_list[nxt] if bw_list[con][0] > 0])
+        bw_list[nxt][1] = reduce(lambda x,y: x*y, [bw_list[con][1] + bw_list[con][0] for con in con_list[nxt] if bw_list[con][1] > 0])
+        return sum(bw_list[nxt])
+
+    leaves = []
+    parent_queue = []
     for nxt in ite:
-
-        if nxt is sentinel:
+        if bridge_cnt[nxt] > 1:
             break
-
-        if bridge_cnt[nxt] == 1:
+        else:
             bw_list[nxt][0] = 1 #cal black value
             bw_list[nxt][1] = 1 #cal white value
-        else:
-            # parent cnt > child cnt
-            # so parent bw_value is [0,0]
-            logger.debug(nxt)
-            bw_list[nxt][0] = reduce(lambda x,y: x*y, [bw_list[con][1] for con in con_list[nxt] if bw_list[con][0] > 0])
-            bw_list[nxt][1] = reduce(lambda x,y: x*y, [bw_list[con][1] + bw_list[con][0] for con in con_list[nxt] if bw_list[con][1] > 0])
+            parent = con_list[nxt].pop()
+            parent_queue.append(parent)
 
-    logger.debug(bw_list)
-    return sum(bw_list[max_iland])
+    parent_queue= deque(sorted(parent_queue, key=lambda k:bridge_cnt[k]))
+    logger.debug(parent_queue)
+    holder = 0
+    while parent_queue:
+        op = parent_queue.popleft()
+
+        # logger.debug(parent_queue)
+        # logger.debug(con_list[op])
+        if bw_list[op][0] > 0:
+            continue
+        empty_count = [bw_list[i][0] == 0 for i in con_list[op]]
+        # logger.debug(empty_count)
+        if sum(empty_count) <= 1:
+            parent_queue.extend(con_list[op])
+            temp = cal_bw(op)
+            holder = max(holder, temp)
+            logger.debug(f'operand: {op}  bw_list:{bw_list[op]}')
+        else:
+            parent_queue.extend(con_list[op])
+            parent_queue.append(op)
+
+
+    # logger.debug(bw_list)
+    return holder % 10 ** 9
 
 
 def test_sample1():
@@ -80,3 +106,19 @@ def test_sample1():
             [3, 2]
             ]
     assert  14 == cal(N, bridges)
+
+def test_sample2():
+    N = 10
+    bridges = [
+            [7, 9],
+            [8, 1],
+            [9, 6],
+            [10, 8],
+            [8, 6],
+            [10, 3],
+            [5, 8],
+            [4, 8],
+            [2, 5],
+            ]
+    assert  192 == cal(N, bridges)
+

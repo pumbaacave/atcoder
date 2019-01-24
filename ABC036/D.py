@@ -15,24 +15,51 @@ N 個の島があります。 島には 1 から N までの番号がついて�
 from itertools import chain
 from functools import reduce
 from collections import Counter, deque
+import weakref
 class WBTree(object):
     class Node(object):
-        def __init__(self, children=[]):
-            self.children = children
+        def __init__(self, children_ids=[], node_id=0, parent_id=0, tree=None):
+            self.children_ids = children_ids
+            self.children = []
+            self.parent_id = parent_id
+            self.node_id = node_id
+            self.tree = weakref.ref(tree)
+            [self.children.append(WBTree.Node(filter(lambda x:x != node_id, self.tree().con_list[c_id]), c_id, node_id, tree)) \
+                    for c_id in self.children_ids]
+
 
         def white(self):
             if not self.children:
-                return 2
+                return 1
             else:
-                return reduce(lambda x, y: x * y , [c.white() for c in self.children])
+                return reduce(lambda x, y: x * y , [c.white() + c.black() for c in self.children])
         def black(self):
             if not self.children:
                 return 1
             else:
-                return reduce(lambda x, y: x + y , [c.black() for c in self.children])
+                return reduce(lambda x, y: x * y , [c.white() for c in self.children])
+        def __repr__(self):
+            return ' '.join(chain('value {}\n'.format(self.node_id), [repr(child) for child in self.children]))
 
-    def __init__(self, bridge_list):
-        pass
+        def comb(self):
+            return self.black() + self.white()
+
+    def __init__(self, N, bridges):
+        bridge_cnt = Counter()
+        bw_list = [[0,0] for _ in range(N+1)]
+        con_list = [[] for _ in range(N+1)]
+        for l, r in bridges:
+            bridge_cnt[r] += 1
+            bridge_cnt[l] += 1
+            con_list[l].append(r)
+            con_list[r].append(l)
+        self.bw_list = bw_list
+        self.con_list = con_list
+        sorted_c = sorted(bridge_cnt, key=lambda key: bridge_cnt[key]) # cnt min first
+        root_id = sorted_c[-1]
+        self.root = WBTree.Node(filter(lambda x:x!=root_id, con_list[root_id]), root_id, parent_id=0, tree=self)
+    def __repr__(self):
+        return repr(self.root)
 
 def cal(N, bridges):
     bridge_cnt = Counter()
@@ -105,7 +132,8 @@ def test_sample1():
             [2, 4],
             [3, 2]
             ]
-    assert  14 == cal(N, bridges)
+    tree = WBTree(N, bridges)
+    assert  14 == tree.root.comb()
 
 def test_sample2():
     N = 10
@@ -120,5 +148,6 @@ def test_sample2():
             [4, 8],
             [2, 5],
             ]
-    assert  192 == cal(N, bridges)
+    tree = WBTree(N, bridges)
+    assert  192 == tree.root.comb()
 

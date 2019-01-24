@@ -15,61 +15,45 @@ def lc(): return list(ns())
 def ni(): return int(stdin.readline())
 def nf(): return float(stdin.readline())
  
-n,k = li()
-td = [tuple(li()) for _ in range(n)]
+# n,k = li()
+# td = [tuple(li()) for _ in range(n)]
 
 def cal_score(N, K, records):
     sorted_recs = sorted(records, key=lambda x: -x[1])
     target_queue = deque(sorted_recs[0:K]) # only allow pop() action, so use dequeue
-    # logger.debug(target_queue)
     compare_queue = deque(sorted_recs[K:])
-    count = Counter()
+    distinct_set = set()
+    dup_queue = deque()
+    score = 0
     for neta_point in target_queue:
-        count[neta_point[0]] += 1
-    # logger.debug(count)
+        score += neta_point[1]
+        if neta_point[0] not in distinct_set:
+            distinct_set.add(neta_point[0])
+        else:
+            dup_queue.append(neta_point)
 
-    cardinality = len(count.keys())
-    sum_target_points = sum([n_p[1] for n_p in target_queue])
-    score = pow(cardinality, 2) + sum_target_points
+    cardinality = len(distinct_set)
+    score += pow(cardinality, 2)
     score = int(score)
-    new_scores = deque()
-    new_scores.append(score)
+    maybe_score = score
     # start iteration and comparing gain and lost
     while compare_queue:
         comp = compare_queue.popleft()
-        # buggy
-        # if comp[0] in count:
-        if count[comp[0]] > 0:
+        if comp[0] in distinct_set:
             continue
-        while target_queue:
-            old = target_queue.pop()
-            if count[old[0]] < 2:
-                # swap this neta will not increase cardinality but lower neta point
-                continue
-            else: # check if score will go up
-                inc = 2 * cardinality + 1
-                dec = old[1] - comp[1]
-                delta = inc - dec
-                # logger.debug(f"delta is {delta}")
-                # if delta >= 0:
-                #     logger.debug("SOME")
-                #     logger.debug(f"{old} out")
-                #     logger.debug(f"{comp} in")
-                #     cardinality += 1
-                #     score += delta
-                #     count[old[0]] -= 1
-                #     count[comp[0]] +=1
-                # else: #increase cardinality will bring more lost than gain
-                #     # exit here
-                #     return score
-                new_score = new_scores[-1] + delta
-                new_scores.append(new_score)
+        elif len(dup_queue) < 1:
+            break
+        else:
+            old = dup_queue.pop()
+            inc = 2 * len(distinct_set) + 1
+            dec = old[1] - comp[1]
+            delta = inc - dec
+            maybe_score = maybe_score + delta
+            score = max(score, maybe_score)
 
-                cardinality += 1
-                count[old[0]] -= 1
-                count[comp[0]] +=1
+            distinct_set.add(comp[0])
     # both queues are drained
-    return max(new_scores)
+    return score
 
 
 def test_sample1():

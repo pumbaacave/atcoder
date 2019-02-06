@@ -11,7 +11,7 @@ N 個の島があります。 島には 1 から N までの番号がついて�
 
 """
 
-# from loguru import logger
+from loguru import logger
 from itertools import chain
 from functools import reduce
 from collections import Counter, deque
@@ -151,3 +151,4 @@ def test_sample2():
     tree = WBTree(N, bridges)
     assert  192 == tree.root.comb()
 
+test_sample2()

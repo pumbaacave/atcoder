@@ -15,6 +15,8 @@ class Solution:
             return is_sub_3
 
 # iteration
+from collections import deque
+from itertools import chain
 class Solution:
     def isSubsequence(self, s: 'str', t: 'str') -> 'bool':
         if not s:
@@ -22,14 +24,20 @@ class Solution:
         elif not t:
             return False
 
-        len_s = len(s)
-        len_t = len(t)
-        dp = [[False] * (len_t+1) for _ in range(len_s+1)]
-        dp[0] = [True] * (len_t+1)
-        for i in range(len_s):
-            for j in range(len_t):
-                if s[i] == t[j]:
-                    dp[i+1][j+1] = dp[i][j]
+        itr_s = chain(s, [None])
+        itr_t = chain(t, [None])
+        nxt_s = next(itr_s)
+        nxt_t = next(itr_t)
+        while nxt_t is not None:
+            if nxt_s is None:
+                return True
+            else:
+                if nxt_t == nxt_s:
+                    nxt_t = next(itr_t)
+                    nxt_s = next(itr_s)
                 else:
-                    dp[i+1][j+1] = dp[i+1][j]
-        return dp[-1][-1]
+                    nxt_t = next(itr_t)
+        if nxt_s is None:
+            return True
+        else:
+            return False

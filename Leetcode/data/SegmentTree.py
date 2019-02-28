@@ -5,11 +5,13 @@ class SegmentTree():
     https://leetcode.com/articles/a-recursive-approach-to-segment-trees-range-sum-queries-lazy-propagation/
     """
     def __init__(self, nums):
-        length = len(nums)
-        tree = [0] * 4 * length
+        num_length = len(nums)
+        tree = [0] * 4 * num_length
+
         self.nums = nums
         self.tree = tree
-        self.build_seg_tree(0, 0, length - 1)
+        if num_length != 0:
+            self.build_seg_tree(0, 0, num_length - 1)
 
     def merge(self, A, B):
         return add(A, B)
@@ -30,6 +32,9 @@ class SegmentTree():
         tree_idx holds value of nums[lo:hi+1] :: lo...hi
         query is for nums[i:j]
         """
+        # when nums == []
+        if hi < lo:
+            return 0
         if j < lo or hi < i:
             return 0
         if i <= lo and hi <= j:
@@ -62,26 +67,35 @@ class SegmentTree():
         return "original nums array: "+str(self.nums) + '\n' +\
         "segment tree: "+ str(self.tree)
 
-def test_query_update():
-    nums = list(range(10))
+def test_empth():
+    nums = []
     s = SegmentTree(nums)
     L = len(nums)
-    q = s.query_seg_tree(0, 0, L, 0, 5)
+    q = s.query_seg_tree(0, 0, L - 1, 0, 5)
+    assert q == 0
+
+def test_query_update():
+    nums = list(range(10))
+    L = len(nums)
+    s = SegmentTree(nums)
+    # the #0 node holds value of nums 0..9, total 10 values
+    q = s.query_seg_tree(0, 0, L - 1, 0, 5)
     print(s)
     assert q == 15
-    s.update_seg_tree(0, 0, L, 3, 100)
+    s.update_seg_tree(0, 0, L - 1, 3, 100)
 
-    q = s.query_seg_tree(0, 0, L, 0, 5)
+    q = s.query_seg_tree(0, 0, 9, 0, 5)
     print(s)
     assert q == 112
 
 def test_query():
     nums = [-2, 0, 3, -5, 2, -1]
     s = SegmentTree(nums)
+    print(s)
     L = len(nums)
-    q = s.query_seg_tree(0, 0, L, 0, 2)
+    q = s.query_seg_tree(0, 0, L - 1, 0, 2)
     assert q == 1
-    q = s.query_seg_tree(0, 0, L, 2, 5)
+    q = s.query_seg_tree(0, 0, L - 1, 2, 5)
     assert q == -1
-    q = s.query_seg_tree(0, 0, L, 0, 2)
+    q = s.query_seg_tree(0, 0, L - 1, 0, 5)
     assert q == -3

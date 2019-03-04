@@ -1,25 +1,29 @@
 class Solution:
     def permuteUnique(self, nums: 'List[int]') -> 'List[List[int]]':
-        def compare_insert(i, pmt):
-            temp = pmt[:]
-            temp.insert(i, head)
-            total_pmt.append(temp)
+        # all numbers shold be chosen only once, in sequence
+        state = []
+        total_com = []
+        total_per = []
 
-        if not nums or len(nums) == 1:
-            return [nums]
+        # push new cur_state to next level
+        def bt(cur_state, candidates):
+            total_com.append(cur_state)
+            if not candidates:
+                total_per.append(cur_state)
+            
+            for i in range(len(candidates)):
+                # if i > 0 and candidates[i-1] == candidates[i]:
+                #     continue
+                # bt(cur_state+[candidates[i]], candidates[:i]+candidates[i+1:])
+                # combinatin
+                bt(cur_state+[candidates[i]], candidates[i+1:])
+        nums.sort()
+        bt([], nums)
+        print(total_per)
+        print(total_com)
+        return total_per
 
-        head = nums[0]
-        tails = nums[1:]
-        total_pmt = []
-        for pmt in self.permuteUnique(tails):
-            for i in range(len(pmt)):
-                if  head == pmt[i]:
-                    continue
-                else:
-                    compare_insert(i, pmt)
-            compare_insert(len(pmt), pmt)
-            print(total_pmt)
-        return total_pmt
+        
 
 def test_num_permu():
     s = Solution()

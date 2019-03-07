@@ -6,20 +6,17 @@ class Solution:
         if not A:
             return 0
         num_zero = 0
-        l, r = 0, 0
+        l = 0
         L = len(A)
         longest = 0
-        while r < L:
-            if A[r] == 1:
-                longest = max(longest, r - l + 1)
-            else:
+        for r in range(L):
+            if A[r] == 0:
                 num_zero += 1
-                while num_zero > K:
+                while num_zero > K and l < r:
                     # start droping left side
-                    if A[l] == 0:
-                        num_zero -= 1
+                    num_zero -= (1 - A[l])
                     l += 1
-            r += 1
+            longest = max(longest, r - l + 1)
         return longest
     def longestOnes(self, A, K):
         res = i = 0

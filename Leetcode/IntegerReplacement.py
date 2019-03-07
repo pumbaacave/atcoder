@@ -12,8 +12,7 @@ class Solution:
         length = len(binary)
         while stack:
             if stack[-1]  == '0':
-                stack.pop()
-                num_op += 1
+                stack.pop() num_op += 1
                 r += 1
                 l += 1
                 continue

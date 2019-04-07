@@ -1,3 +1,6 @@
+from random import choice
+from hypothesis import given
+from hypothesis import strategies as st
 class Solution:
     def twoSum(self, nums, target):
         """
@@ -31,10 +34,14 @@ class Solution:
             second_idx = nums.index(second)
         return [first_idx, second_idx]
 
-def test_sample():
-    s = Solution()
-    nums = [2, 7, 11, 15]
-    target = 9
-    assert [0, 1] == s.twoSum(nums, target)
+s = Solution()
+@given(nums=st.lists(st.integers(min_value=1), min_size=2, unique=True))
+def test_sample(nums):
+    global s
+    target = choice(nums) + choice(nums)
+    i,j  = s.twoSum(nums, target)
+    res = [nums[i], nums[j]]
+    assert res[0] in nums
+    assert res[1] in nums
+    assert sum(res) == target
 
-test_sample()

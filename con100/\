@@ -1,0 +1,23 @@
+import heapq
+import sys
+stdin = sys.stdin
+ 
+sys.setrecursionlimit(10**5) 
+ 
+def li(): return map(int, stdin.readline().split())
+
+N, M = tuple(li())
+Cs = []
+for i in range(N):
+    n = tuple(li())
+    Cs.append([-sum(map(abs, n)), n])
+heapq.heapify(Cs)
+def helper(Cs, M, state):
+    if M == 0:
+        return state
+    for i in range(len(Cs))
+        
+
+    
+
+

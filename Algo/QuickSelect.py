@@ -22,6 +22,9 @@ def partition(nums, left, right, pivot_idx):
     return store_idx
 
 def quick_select(nums, left, right, K):
+    # print(nums, left, right, K)
+    if left == right:
+        return nums[left]
     # return the Kth large element of nums
     # pivot_idx = random.randrange(left, right+1)
     pivot_idx = right
@@ -31,7 +34,7 @@ def quick_select(nums, left, right, K):
     elif partition_idx > K:
         return quick_select(nums, left, partition_idx-1, K)
     else:
-        return quick_select(nums, partition_idx+1, right, K-partition_idx)
+        return quick_select(nums, partition_idx+1, right, K)
 
 
 @pytest.mark.skip()
@@ -47,7 +50,7 @@ def test_partition(nums):
 
 
 @pytest.mark.skip()
-@given(nums=lists(integers(), 1))
+@given(nums=lists(integers(), 10))
 def test_quick_select(nums):
     left, right = 0, len(nums) - 1
     K = 0
@@ -58,20 +61,18 @@ def test_quick_select(nums):
 
 import sys
 from timeit import default_timer, timeit
-sys.setrecursionlimit(100*1000)
+sys.setrecursionlimit(10*1000)
 #@pytest.mark.skip()
-@pytest.mark.parametrize("size",[1000 * i for i in range(1, 10)])
+@pytest.mark.parametrize("size",[10 ** i for i in range(1, 8)])
 def test_time(size):
     nums = list(range(size))
     random.shuffle(nums)
     left, right = 0, size - 1
     K = random.randrange(left, right+1)
     
-    # start = default_timer()
-    # ans = quick_select(nums, left, right, K)
-    # end = default_timer()
-    # print(globals())
-    print(timeit("ans = quick_select(nums, left, right, K)", globals=globals().update(locals())), size)
-    # logger.debug(f"problem size: {size}, time: {end - start}")
+    start = default_timer()
+    ans = quick_select(nums, left, right, K)
+    end = default_timer()
+    logger.debug(f"problem size: {size}, time: {end - start}")
     assert ans == K
 

@@ -3,20 +3,23 @@ class Solution:
         # TODO check input
         m = len(obstacleGrid)
         n = len(obstacleGrid[0])
-        dp = [[0] * (n+1) for _ in range(m+1)]
-        for i in range(n+1):
-            if obstacleGrid[1][i-1] == 0:
-                dp[1][i] = 1
-        for i in range(m+1):
-            if obstacleGrid[i-1][0] == 0:
-                dp[i][1] = 1
-        for i in range(2, m+1):
-            for j in range(2, n+1):
-                num_left = dp[i-1][j] if obstacleGrid[i-2][j-1] == 0 else 0
-                num_right = dp[i][j-1] if obstacleGrid[i-1][j-2] == 0 else 0
-                dp[i][j] = num_left + num_right
+        if m == 1 and n == 1 and obstacleGrid[m-1][n-1] == 1:
+            return 0
+        memo = {(m - 1, n - 1): 1 - obstacleGrid[m-1][n-1]}
+        def helper(c, r):
+            if (c, r) in memo: return memo[(c, r)]
+            if obstacleGrid[c][r] != 1:
+                num_r = helper(c, r+1) if r+1 < n else 0
+                num_d = helper(c+1, r) if c+1 < m else 0
+                total = num_r + num_d
+            else:
+                total = 0
+            memo[(c, r)] = total
+            return total
 
-        return dp[m][n]
+        helper(0, 0)
+        return memo[(0, 0)] if memo[(0,0)] > 0 else 0
+
 
 s = Solution()
 s.uniquePaths(3,2)

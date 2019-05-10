@@ -8,19 +8,20 @@ class Solution(object):
         """
         large = 1 << 100
         memo = {}
+        @lru_cache(None)
         def cal(target):
-            if target in memo:
-                return memo[target]
+            # if target in memo:
+            #     return memo[target]
             if target == 0:
                 return 0
             if target < 0:
                 return large
             num = min([cal(target - c) for c in coins])
             if num == large:
-                memo[target] = large
+                # memo[target] = large
                 return large
             else:
-                memo[target] = num + 1
+                # memo[target] = num + 1
                 return num + 1
 
         res =  cal(amount)
@@ -32,4 +33,4 @@ def test():
     coins = [1,2,5]
     a = 100
     s = Solution()
-    assert s.coinChange(coins, a) == 100
+    assert s.coinChange(coins, a) == 20

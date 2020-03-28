@@ -3,6 +3,7 @@ stdin = sys.stdin
  
 sys.setrecursionlimit(10**5) 
  
+def ii(): return int(stdin.readline())
 def li(): return map(int, stdin.readline().split())
 def li_(): return map(lambda x: int(x)-1, stdin.readline().split())
 def lf(): return map(float, stdin.readline().split())

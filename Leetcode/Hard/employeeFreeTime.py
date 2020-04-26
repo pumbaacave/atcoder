@@ -8,8 +8,9 @@ class Interval:
 class Solution:
     # do union and substract from full set
     def employeeFreeTime(self, schedule: '[[Interval]]') -> '[Interval]':
-        test = list((interval for interval in (person_sch for person_sch in schedule)))
-        intervals = sorted((interval for person_sch in schedule for interval in person_sch), key=lambda iv:(iv.start, -iv.end)) 
+        intervals = sorted((interval for person_sch in schedule
+                                for interval in person_sch) 
+                            , key=lambda iv: (iv.start, -iv.end))
         unions = []
         for interval in intervals:
             # not intersect case

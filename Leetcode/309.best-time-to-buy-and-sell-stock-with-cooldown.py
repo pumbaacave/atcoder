@@ -14,7 +14,8 @@ class Solution:
 
         N = len(prices)
         dp_buy = [-float('INF')] * N
-        dp_sell = [0] * N
+        # any initial val <= 0 is ok
+        dp_sell = [-float('INF')] * N
 
         # first day cannot sell
         dp_buy[0] = -prices[0]
